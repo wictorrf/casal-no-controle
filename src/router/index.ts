@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/lib/supabase'
 
 const router = createRouter({
@@ -48,14 +49,21 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const { data } = await supabase.auth.getSession()
-  const hasSession = !!data.session
+  const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !hasSession) {
+  // Na inicialização do app (primeiro acesso), o store pode não ter sido
+  // populado ainda — consultamos o Supabase diretamente nesse caso.
+  let isAuthenticated = authStore.isAuthenticated
+  if (!authStore.isAuthenticated && authStore.isLoading) {
+    const { data } = await supabase.auth.getSession()
+    isAuthenticated = !!data.session
+  }
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     return { name: 'login' }
   }
 
-  if (to.meta.requiresGuest && hasSession) {
+  if (to.meta.requiresGuest && isAuthenticated) {
     return { name: 'dashboard' }
   }
 })

@@ -55,8 +55,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function signOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    // Limpa o estado local independente do resultado da API
+    // (token expirado ou erro de rede não devem bloquear o logout)
+    try {
+      await supabase.auth.signOut()
+    } catch {
+      // ignora erro de rede — estado local é limpo abaixo
+    }
     session.value = null
     user.value = null
     casalId.value = null
