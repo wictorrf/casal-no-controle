@@ -52,8 +52,10 @@
     </div>
   </header>
 
-  <!-- Overlay para fechar dropdown -->
-  <div v-if="showDropdown" class="header__overlay" @click="showDropdown = false" />
+  <!-- Overlay via Teleport: fica no body mas abaixo do header (z-index 99 < 100) -->
+  <Teleport to="body">
+    <div v-if="showDropdown" class="header__overlay" @click="showDropdown = false" />
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -239,11 +241,11 @@ function handleLogout() {
   background: var(--color-despesa-dim);
 }
 
-/* Overlay invisível */
+/* Overlay invisível — z-index 99 < 100 (header) para não bloquear o dropdown */
 .header__overlay {
   position: fixed;
   inset: 0;
-  z-index: 105;
+  z-index: 99;
 }
 
 /* Animação dropdown */
