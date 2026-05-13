@@ -11,15 +11,35 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!user.value)
 
-  /** Busca o casal_id do usuário logado via casal_membros */
+  /**
+   * Busca o casal_id do usuário.
+   * Se não existir, tenta criar automaticamente via RPC `criar_casal`.
+   */
   async function fetchCasalId(userId: string): Promise<void> {
-    const { data } = await supabase
+    // 1. Tenta buscar casal existente
+    const { data, error: fetchError } = await supabase
       .from('casal_membros')
       .select('casal_id')
       .eq('user_id', userId)
       .maybeSingle()
 
-    casalId.value = data?.casal_id ?? null
+    if (data?.casal_id) {
+      casalId.value = data.casal_id
+      return
+    }
+
+    // 2. Nenhum casal encontrado (ou tabela inexistente) — tenta criar via RPC
+    if (!fetchError || fetchError.code !== 'PGRST116') {
+      const { data: novoCasalId, error: rpcError } = await supabase
+        .rpc('criar_casal', { nome_casal: 'Meu Casal' })
+
+      if (!rpcError && novoCasalId) {
+        casalId.value = novoCasalId as string
+        return
+      }
+    }
+
+    casalId.value = null
   }
 
   async function initialize() {
