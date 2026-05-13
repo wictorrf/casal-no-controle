@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Syne:wght@400;600;700;800&display=swap');
+
+/* ===== Design Tokens ===== */
+:root {
+  /* Cores */
+  --color-bg: #0D0F14;
+  --color-card: #161B22;
+  --color-card-hover: #1C2330;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+
+  --color-receita: #00C896;
+  --color-receita-dim: rgba(0, 200, 150, 0.12);
+  --color-despesa: #FF4757;
+  --color-despesa-dim: rgba(255, 71, 87, 0.12);
+  --color-cartao: #4A9EFF;
+  --color-cartao-dim: rgba(74, 158, 255, 0.12);
+  --color-saldo: #F5C518;
+  --color-saldo-dim: rgba(245, 197, 24, 0.12);
+
+  --color-text-primary: #E8EDF2;
+  --color-text-secondary: #8B949E;
+  --color-text-muted: #4A5568;
+  --color-text-inverse: #0D0F14;
+
+  /* Tipografia */
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Syne', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+
+  /* Espaçamento */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Bordas */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-glow-receita: 0 0 20px rgba(0, 200, 150, 0.2);
+  --shadow-glow-despesa: 0 0 20px rgba(255, 71, 87, 0.2);
+  --shadow-glow-cartao: 0 0 20px rgba(74, 158, 255, 0.2);
+
+  /* Transições */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Layout — mobile base */
+  --bottom-nav-height: 72px;
+  --header-height: 64px;
+  --max-width: 480px;
+  --sidebar-width: 0px;
+  /* Offset do app container em relação à viewport (centralização) */
+  --app-offset: max(0px, calc((100vw - var(--max-width)) / 2));
+}
+
+/* ≥ 768px — Tablet: container central */
+@media (min-width: 768px) {
+  :root {
+    --max-width: 768px;
+    --app-offset: max(0px, calc((100vw - var(--max-width)) / 2));
+  }
+}
+
+/* ≥ 1024px — Desktop: sidebar lateral, mais espaço */
+@media (min-width: 1024px) {
+  :root {
+    --max-width: 1100px;
+    --sidebar-width: 220px;
+    --bottom-nav-height: 0px;   /* sidebar substitui a BottomNav */
+    --header-height: 64px;
+    --app-offset: max(0px, calc((100vw - var(--max-width)) / 2));
+  }
+}
+
+/* ≥ 1440px — Wide: layout ainda mais amplo */
+@media (min-width: 1440px) {
+  :root {
+    --max-width: 1280px;
+    --app-offset: max(0px, calc((100vw - var(--max-width)) / 2));
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  font-weight: var(--font-regular);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+#app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+input,
+select,
+textarea {
+  font-family: var(--font-body);
+}
+
+img,
+svg {
+  display: block;
+}
