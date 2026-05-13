@@ -289,6 +289,7 @@ async function handleSubmit() {
           valor: valorPorParcela.value,
           tipo: 'cartao',
           categoria: form.categoria,
+          ano: form.ano,
         },
         form.totalParcelas,
         form.mes,
