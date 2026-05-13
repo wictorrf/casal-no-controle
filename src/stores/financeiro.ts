@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/stores/auth'
 import type { Lancamento, LancamentoInput, ResumoMensal, Assinatura, AssinaturaInput } from '@/types'
 import dayjs from 'dayjs'
 
@@ -91,14 +92,17 @@ export const useFinanceiroStore = defineStore('financeiro', () => {
 
   async function adicionarLancamento(input: LancamentoInput) {
     error.value = null
+    const authStore = useAuthStore()
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) throw new Error('Usuário não autenticado.')
+    if (!authStore.casalId) throw new Error('Casal não encontrado. Contate o administrador.')
 
     const { data, error: err } = await supabase
       .from('lancamentos')
       .insert({
         ...input,
         user_id: userData.user.id,
+        casal_id: authStore.casalId,
         is_recorrente: input.is_recorrente ?? false,
         total_parcelas: input.total_parcelas ?? null,
         parcela_atual: input.parcela_atual ?? null,
@@ -118,8 +122,10 @@ export const useFinanceiroStore = defineStore('financeiro', () => {
     mesInicio: number,
     anoInicio: number,
   ) {
+    const authStore = useAuthStore()
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) throw new Error('Usuário não autenticado.')
+    if (!authStore.casalId) throw new Error('Casal não encontrado. Contate o administrador.')
 
     // Insere a primeira parcela para obter o pai
     const { data: primeiraParcela, error: errPrimeiro } = await supabase
@@ -127,6 +133,7 @@ export const useFinanceiroStore = defineStore('financeiro', () => {
       .insert({
         ...base,
         user_id: userData.user.id,
+        casal_id: authStore.casalId,
         mes: mesInicio,
         ano: anoInicio,
         is_recorrente: false,
@@ -169,7 +176,13 @@ export const useFinanceiroStore = defineStore('financeiro', () => {
     if (demaisParcelas.length > 0) {
       const { error: errDemais } = await supabase
         .from('lancamentos')
-        .insert(demaisParcelas.map((p) => ({ ...p, user_id: userData.user!.id })))
+        .insert(
+          demaisParcelas.map((p) => ({
+            ...p,
+            user_id: userData.user!.id,
+            casal_id: authStore.casalId,
+          })),
+        )
 
       if (errDemais) throw errDemais
     }
@@ -233,14 +246,16 @@ export const useFinanceiroStore = defineStore('financeiro', () => {
   }
 
   async function criarAssinatura(input: AssinaturaInput) {
+    const authStore = useAuthStore()
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) throw new Error('Usuário não autenticado.')
+    if (!authStore.casalId) throw new Error('Casal não encontrado. Contate o administrador.')
 
     const { data, error: err } = await supabase
       .from('assinaturas')
       .insert({
         ...input,
-        casal_id: userData.user.id,
+        casal_id: authStore.casalId,
         ativa: true,
       })
       .select()
